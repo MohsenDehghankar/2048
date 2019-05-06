@@ -26,6 +26,7 @@ public class PlayGround {
     }
 
     public void move(Direction direction) {
+        Integer[][] previouseNumbers = getCopyOfNumbers();
         switch (direction) {
             case LEFT:
                 for (int i = 0; i < squareSize; i++) {
@@ -52,7 +53,9 @@ public class PlayGround {
                 }
                 break;
         }
-        generateRandomAfterMove();
+        Integer[][] newNumbers = getCopyOfNumbers();
+        if (!isEqual(previouseNumbers, newNumbers))
+            generateRandomAfterMove();
         //generateRandomAfterMove();
         trueHasJoineds();
     }
@@ -85,6 +88,26 @@ public class PlayGround {
         return result;
     }
 
+    private Integer[][] getCopyOfNumbers() {
+        Integer[][] copy = new Integer[squareSize][squareSize];
+        for (int i = 0; i < squareSize; i++) {
+            for (int j = 0; j < squareSize; j++) {
+                copy[i][j] = numbers[i][j].getNumber();
+            }
+        }
+        return copy;
+    }
+
+    private boolean isEqual(Integer[][] first, Integer[][] second) {
+        for (int i = 0; i < squareSize; i++) {
+            for (int j = 0; j < squareSize; j++) {
+                if (first[i][j] != second[i][j])
+                    return false;
+            }
+        }
+        return true;
+    }
+
     public void show() {
         for (int i = 0; i < squareSize; i++) {
             for (int j = 0; j < squareSize; j++) {
@@ -110,7 +133,7 @@ public class PlayGround {
         for (int i = squareSize - 2; i >= 0; i--) {
             // i --> i + 1
             for (int j = squareSize - 2; j >= 0; j--) {
-                movrOneNumber(numbers,i);
+                movrOneNumber(numbers, i);
             }
         }
     }
