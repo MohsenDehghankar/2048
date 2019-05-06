@@ -3,6 +3,12 @@ public class Number {
     private int x;
     private int y;
 
+    public Number(int number, int x, int y) {
+        this.number = number;
+        this.x = x;
+        this.y = y;
+    }
+
     public void setX(int x) {
         this.x = x;
     }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PlayGround {
     private Number[][] numbers;
@@ -8,51 +9,86 @@ public class PlayGround {
         this.squareSize = squareSize;
         numbers = new Number[squareSize][squareSize];
         // TODO initializing numbers
+        initializePlayGround();
+    }
+
+    private void initializePlayGround() {
+        int randomRowOne = new Random().nextInt(squareSize);
+        int randomColOne = new Random().nextInt(squareSize);
+        int randomRowTwo = new Random().nextInt(squareSize);
+        int randomColTwo = new Random().nextInt(squareSize);
+        numbers[randomRowOne][randomColOne] = new Number(2, randomRowOne, randomColOne);
+        numbers[randomRowTwo][randomColTwo] = new Number(2, randomRowTwo, randomColTwo);
     }
 
     public void move(Direction direction) {
         switch (direction) {
             case LEFT:
-                for (int i = 0; i < squareSize - 1; i++) {
-                    joinTwoLists(getArrayListOfNumbers(i, false),
-                            getArrayListOfNumbers(i + 1, false));
+                for (int i = squareSize-2; i >= 0 ; i--) {
+                    joinTwoLists(i, i + 1, false);
                 }
                 break;
             case RIGHT:
-                for (int i = squareSize - 1; i >= 0; i--) {
-                    joinTwoLists(getArrayListOfNumbers(i, false),
-                            getArrayListOfNumbers(i - 1, false));
+                for (int i = 1; i < squareSize; i++) {
+                    joinTwoLists( i, i - 1, false);
                 }
                 break;
             case DOWN:
-                for (int i = squareSize - 1; i >= 0; i--) {
-                    joinTwoLists(getArrayListOfNumbers(i, true),
-                            getArrayListOfNumbers(i - 1, true));
+                for (int i = 1; i <squareSize; i++) {
+                    joinTwoLists(i,i-1,true);
                 }
                 break;
             case UP:
-                for (int i = squareSize - 1; i >= 0; i--) {
-                    joinTwoLists(getArrayListOfNumbers(i, true),
-                            getArrayListOfNumbers(i + 1, true));
+                for (int i = squareSize-2; i >= 0; i--) {
+                    joinTwoLists(i,i+1,true);
                 }
                 break;
         }
     }
 
-    private void joinTwoNumbers(Number target, Number secondNumber) {
-        // target stays in its position and secondNumber disappears
-        if (secondNumber.getNumber() == target.getNumber()) {
-            int x = secondNumber.getX();
-            int y = secondNumber.getY();
-            numbers[x][y] = null;
-            target.setNumber(target.getNumber() * 2);
+    private void moveListTo(ArrayList<Number> list, Direction direction, int target) {
+        switch (direction) {
+            case UP:
+                for (int i = 0; i < squareSize; i++) {
+                    numbers[target][i] = list.get(i);
+                }
+                break;
+            case RIGHT:
+                for (int i = 0; i < squareSize; i++) {
+                    numbers[i][target] = list.get(i);
+                }
+                break;
         }
     }
 
-    private void joinTwoLists(ArrayList<Number> target, ArrayList<Number> secondList) {
-        // either column or row
-        for (int i = 0; i < squareSize; i++) {
-            joinTwoNumbers(target.get(i), secondList.get(i));
+    private void joinTwoNumbers(int targetX, int targetY, int secondNumberX, int secondNumberY) {
+        // target stays in its position and secondNumber disappears
+        if (numbers[targetX][targetY] == null && numbers[secondNumberX][secondNumberY] == null)
+            return;
+        else if (numbers[targetX][targetY] == null) {
+            numbers[targetX][targetY] = numbers[secondNumberX][secondNumberY];
+            numbers[secondNumberX][secondNumberY] = null;
+
+        } else if (numbers[secondNumberX][secondNumberY] == null){
+            return;
+        } else if (numbers[secondNumberX][secondNumberY].getNumber()
+                == numbers[targetX][targetY].getNumber()) {
+            numbers[secondNumberX][secondNumberY] = null;
+            numbers[targetX][targetY].setNumber(numbers[targetX][targetY].getNumber() * 2);
+        }
+    }
+
+    private void joinTwoLists(int targetPosition, int secondPosition, boolean isRow) {
+        if (isRow) {
+            for (int i = 0; i < squareSize; i++) {
+                joinTwoNumbers(targetPosition, i
+                        , secondPosition, i);
+            }
+        } else {
+            for (int i = 0; i < squareSize; i++) {
+                joinTwoNumbers(i, targetPosition
+                        , i, secondPosition);
+            }
         }
     }
 

@@ -3,8 +3,9 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        PlayGround playGround = new PlayGround(5);
         Scanner scanner = new Scanner(System.in);
+        int squareSize = scanner.nextInt();
+        PlayGround playGround = new PlayGround(squareSize);
         while (true) {
             playGround.show();
             String commmand = scanner.next();
