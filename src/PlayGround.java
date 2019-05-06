@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 public class PlayGround {
     private Number[][] numbers;
@@ -13,83 +12,66 @@ public class PlayGround {
     }
 
     private void initializePlayGround() {
+        for (int i = 0; i < squareSize; i++) {
+            for (int j = 0; j < squareSize; j++) {
+                numbers[i][j] = new Number(0, i, j);
+            }
+        }
         int randomRowOne = new Random().nextInt(squareSize);
         int randomColOne = new Random().nextInt(squareSize);
         int randomRowTwo = new Random().nextInt(squareSize);
         int randomColTwo = new Random().nextInt(squareSize);
-        numbers[randomRowOne][randomColOne] = new Number(2, randomRowOne, randomColOne);
-        numbers[randomRowTwo][randomColTwo] = new Number(2, randomRowTwo, randomColTwo);
+        numbers[randomRowOne][randomColOne].setNumber(2);
+        numbers[randomRowTwo][randomColTwo].setNumber(2);
     }
 
     public void move(Direction direction) {
         switch (direction) {
             case LEFT:
-                for (int i = squareSize-2; i >= 0 ; i--) {
-                    joinTwoLists(i, i + 1, false);
+                for (int i = 0; i < squareSize; i++) {
+                    ArrayList<Number> numbers = getArrayListOfNumbers(i, true);
+                    Collections.reverse(numbers);
+                    moveInRowORColumn(numbers);
                 }
                 break;
             case RIGHT:
-                for (int i = 1; i < squareSize; i++) {
-                    joinTwoLists( i, i - 1, false);
+                for (int i = 0; i < squareSize; i++) {
+                    moveInRowORColumn(getArrayListOfNumbers(i, true));
                 }
                 break;
             case DOWN:
-                for (int i = 1; i <squareSize; i++) {
-                    joinTwoLists(i,i-1,true);
+                for (int i = 0; i < squareSize; i++) {
+                    moveInRowORColumn(getArrayListOfNumbers(i, false));
                 }
                 break;
             case UP:
-                for (int i = squareSize-2; i >= 0; i--) {
-                    joinTwoLists(i,i+1,true);
-                }
-                break;
-        }
-    }
-
-    private void moveListTo(ArrayList<Number> list, Direction direction, int target) {
-        switch (direction) {
-            case UP:
                 for (int i = 0; i < squareSize; i++) {
-                    numbers[target][i] = list.get(i);
-                }
-                break;
-            case RIGHT:
-                for (int i = 0; i < squareSize; i++) {
-                    numbers[i][target] = list.get(i);
+                    ArrayList<Number> numbers = getArrayListOfNumbers(i, false);
+                    Collections.reverse(numbers);
+                    moveInRowORColumn(numbers);
                 }
                 break;
         }
+        generateRandomAfterMove();
+        //generateRandomAfterMove();
+        trueHasJoineds();
     }
 
-    private void joinTwoNumbers(int targetX, int targetY, int secondNumberX, int secondNumberY) {
-        // target stays in its position and secondNumber disappears
-        if (numbers[targetX][targetY] == null && numbers[secondNumberX][secondNumberY] == null)
-            return;
-        else if (numbers[targetX][targetY] == null) {
-            numbers[targetX][targetY] = numbers[secondNumberX][secondNumberY];
-            numbers[secondNumberX][secondNumberY] = null;
-
-        } else if (numbers[secondNumberX][secondNumberY] == null){
-            return;
-        } else if (numbers[secondNumberX][secondNumberY].getNumber()
-                == numbers[targetX][targetY].getNumber()) {
-            numbers[secondNumberX][secondNumberY] = null;
-            numbers[targetX][targetY].setNumber(numbers[targetX][targetY].getNumber() * 2);
-        }
-    }
-
-    private void joinTwoLists(int targetPosition, int secondPosition, boolean isRow) {
-        if (isRow) {
-            for (int i = 0; i < squareSize; i++) {
-                joinTwoNumbers(targetPosition, i
-                        , secondPosition, i);
-            }
-        } else {
-            for (int i = 0; i < squareSize; i++) {
-                joinTwoNumbers(i, targetPosition
-                        , i, secondPosition);
+    private void generateRandomAfterMove() {
+        ArrayList<Integer> rows = new ArrayList<>();
+        ArrayList<Integer> cols = new ArrayList<>();
+        for (int i = 0; i < squareSize; i++) {
+            for (int j = 0; j < squareSize; j++) {
+                if (numbers[i][j].getNumber() == 0) {
+                    rows.add(i);
+                    cols.add(j);
+                }
             }
         }
+        int random = (new Random().nextInt(rows.size()));
+        int randomNumber = (new Random().nextInt(2));
+        Number newNumber = new Number((randomNumber + 1) * 2, rows.get(random), cols.get(random));
+        numbers[rows.get(random)][cols.get(random)] = newNumber;
     }
 
     private ArrayList<Number> getArrayListOfNumbers(int number, boolean isRow) {
@@ -112,6 +94,39 @@ public class PlayGround {
                     System.out.printf("|%d|", numbers[i][j].getNumber());
             }
             System.out.println();
+        }
+    }
+
+    private void trueHasJoineds() {
+        for (int i = 0; i < squareSize; i++) {
+            for (int j = 0; j < squareSize; j++) {
+                numbers[i][j].setHasJoined(false);
+            }
+        }
+    }
+
+    private void moveInRowORColumn(ArrayList<Number> numbers) {
+        // from first to last -->
+        for (int i = squareSize - 2; i >= 0; i--) {
+            // i --> i + 1
+            for (int j = squareSize - 2; j >= 0; j--) {
+                movrOneNumber(numbers,i);
+            }
+        }
+    }
+
+    private void movrOneNumber(ArrayList<Number> numbers, int index) {
+        for (int i = index; i < squareSize - 1; i++) {
+            if (numbers.get(i + 1).getNumber() == 0) {
+                numbers.get(i + 1).setNumber(numbers.get(i).getNumber());
+                numbers.get(i).setNumber(0);
+            } else if (numbers.get(i + 1).getNumber() == numbers.get(i).getNumber()
+                    && !numbers.get(i).getHasJoined() && !numbers.get(i + 1).getHasJoined()) {
+                numbers.get(i).setNumber(0);
+                numbers.get(i + 1).setNumber(2 * numbers.get(i + 1).getNumber());
+                numbers.get(i).setHasJoined(true);
+                numbers.get(i + 1).setHasJoined(true);
+            }
         }
     }
 }

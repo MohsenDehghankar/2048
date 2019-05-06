@@ -2,6 +2,7 @@ public class Number {
     private int number;
     private int x;
     private int y;
+    private boolean hasJoined = false;
 
     public Number(int number, int x, int y) {
         this.number = number;
@@ -31,5 +32,13 @@ public class Number {
 
     public int getNumber() {
         return number;
+    }
+
+    public void setHasJoined(boolean hasJoined) {
+        this.hasJoined = hasJoined;
+    }
+
+    public boolean getHasJoined(){
+        return hasJoined;
     }
 }
