@@ -1,6 +1,7 @@
 package firstProblem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
@@ -13,6 +14,11 @@ public class PlayGround {
         numbers = new Number[squareSize][squareSize];
         // TODO initializing numbers
         initializePlayGround();
+    }
+
+    public PlayGround(Number[][] numbers) {
+        this.numbers = numbers;
+        this.squareSize = numbers.length;
     }
 
     private void initializePlayGround() {
@@ -155,6 +161,32 @@ public class PlayGround {
                 numbers.get(i + 1).setHasJoined(true);
             }
         }
+    }
+
+    private boolean canMove() { // if false , means game is finished
+        for (int i = 0; i < squareSize; i++) {
+            if(canMove(numbers[i]))
+                return true;
+        }
+        for (int i = 0; i < squareSize; i++) {
+            Number[] sample = new Number[squareSize];
+            for (int j = 0; j < squareSize; j++) {
+                sample[j] = numbers[j][i];
+            }
+            if(canMove(sample))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean canMove(Number[] row) {
+        for (int i = 0; i < squareSize; i++) {
+            if (row[i].getNumber() == 0)
+                return true;
+            if (i != (squareSize - 1) && (row[i].getNumber() == row[i + 1].getNumber()))
+                return true;
+        }
+        return false;
     }
 }
 
