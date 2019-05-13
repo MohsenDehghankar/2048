@@ -7,17 +7,14 @@ import java.util.Random;
 public class PlayGround {
     private Number[][] numbers;
     private int squareSize;
+    private Player player;
 
-    public PlayGround(int squareSize) {
+    public PlayGround(int squareSize, Player player) {
         this.squareSize = squareSize;
+        this.player = player;
         numbers = new Number[squareSize][squareSize];
-        // TODO initializing numbers
-        initializePlayGround();
-    }
 
-    public PlayGround(Number[][] numbers) {
-        this.numbers = numbers;
-        this.squareSize = numbers.length;
+        initializePlayGround();
     }
 
     private void initializePlayGround() {
@@ -63,10 +60,24 @@ public class PlayGround {
                 break;
         }
         Integer[][] newNumbers = getCopyOfNumbers();
+        assignPoint(previousNumbers,newNumbers);
         if (!isEqual(previousNumbers, newNumbers))
             generateRandomAfterMove();
-        //generateRandomAfterMove();
         trueHasJoineds();
+    }
+    private int calculateSumOfArray(Integer[][] numbers){
+        int result = 0;
+        for (int i = 0; i < squareSize; i++) {
+            for (int j = 0; j <squareSize; j++) {
+                result+= numbers[i][j];
+            }
+        }
+        return result;
+    }
+    private void assignPoint(Integer[][] previous, Integer[][] last) {
+        int preSum = calculateSumOfArray(previous);
+        int lastSum = calculateSumOfArray(last);
+        player.addPoint(lastSum - preSum);
     }
 
     private void generateRandomAfterMove() {
@@ -164,7 +175,7 @@ public class PlayGround {
 
     private boolean canMove() { // if false , means game is finished
         for (int i = 0; i < squareSize; i++) {
-            if(canMove(numbers[i]))
+            if (canMove(numbers[i]))
                 return true;
         }
         for (int i = 0; i < squareSize; i++) {
@@ -172,7 +183,7 @@ public class PlayGround {
             for (int j = 0; j < squareSize; j++) {
                 sample[j] = numbers[j][i];
             }
-            if(canMove(sample))
+            if (canMove(sample))
                 return true;
         }
         return false;

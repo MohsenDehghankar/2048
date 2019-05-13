@@ -20,7 +20,7 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();*/
         Controller controller = Controller.getInstance();
-        controller.mainMenu(primaryStage);
+        controller.inGameMenu(new PlayGround(4,null),null,primaryStage);
     }
 
 
