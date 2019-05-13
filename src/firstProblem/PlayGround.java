@@ -1,7 +1,6 @@
 package firstProblem;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
@@ -36,7 +35,7 @@ public class PlayGround {
     }
 
     public void move(Direction direction) {
-        Integer[][] previouseNumbers = getCopyOfNumbers();
+        Integer[][] previousNumbers = getCopyOfNumbers();
         switch (direction) {
             case LEFT:
                 for (int i = 0; i < squareSize; i++) {
@@ -64,7 +63,7 @@ public class PlayGround {
                 break;
         }
         Integer[][] newNumbers = getCopyOfNumbers();
-        if (!isEqual(previouseNumbers, newNumbers))
+        if (!isEqual(previousNumbers, newNumbers))
             generateRandomAfterMove();
         //generateRandomAfterMove();
         trueHasJoineds();
@@ -143,12 +142,12 @@ public class PlayGround {
         for (int i = squareSize - 2; i >= 0; i--) {
             // i --> i + 1
             for (int j = squareSize - 2; j >= 0; j--) {
-                movrOneNumber(numbers, i);
+                moveOneNumber(numbers, i);
             }
         }
     }
 
-    private void movrOneNumber(ArrayList<Number> numbers, int index) {
+    private void moveOneNumber(ArrayList<Number> numbers, int index) {
         for (int i = index; i < squareSize - 1; i++) {
             if (numbers.get(i + 1).getNumber() == 0) {
                 numbers.get(i + 1).setNumber(numbers.get(i).getNumber());
@@ -187,6 +186,14 @@ public class PlayGround {
                 return true;
         }
         return false;
+    }
+
+    public Number[][] getNumbers() {
+        return numbers;
+    }
+
+    public int getSquareSize() {
+        return squareSize;
     }
 }
 
