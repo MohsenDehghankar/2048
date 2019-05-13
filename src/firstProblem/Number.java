@@ -48,6 +48,7 @@ public class Number {
 
     public void setNumber(int number) {
         this.number = number;
+        setColor();
     }
 
     public int getNumber() {

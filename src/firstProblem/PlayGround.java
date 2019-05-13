@@ -13,7 +13,6 @@ public class PlayGround {
         this.squareSize = squareSize;
         this.player = player;
         numbers = new Number[squareSize][squareSize];
-
         initializePlayGround();
     }
 
@@ -60,23 +59,28 @@ public class PlayGround {
                 break;
         }
         Integer[][] newNumbers = getCopyOfNumbers();
-        assignPoint(previousNumbers,newNumbers);
+        //assignPoint(previousNumbers,newNumbers);
         if (!isEqual(previousNumbers, newNumbers))
             generateRandomAfterMove();
         trueHasJoineds();
     }
-    private int calculateSumOfArray(Integer[][] numbers){
+
+    private int calculateSumOfArray(Integer[][] numbers) {
         int result = 0;
         for (int i = 0; i < squareSize; i++) {
-            for (int j = 0; j <squareSize; j++) {
-                result+= numbers[i][j];
+            for (int j = 0; j < squareSize; j++) {
+                result += numbers[i][j];
             }
         }
         return result;
     }
+
     private void assignPoint(Integer[][] previous, Integer[][] last) {
         int preSum = calculateSumOfArray(previous);
         int lastSum = calculateSumOfArray(last);
+        //TODO
+        System.out.println(preSum);
+        System.out.println(lastSum);
         player.addPoint(lastSum - preSum);
     }
 
@@ -165,6 +169,7 @@ public class PlayGround {
                 numbers.get(i).setNumber(0);
             } else if (numbers.get(i + 1).getNumber() == numbers.get(i).getNumber()
                     && !numbers.get(i).getHasJoined() && !numbers.get(i + 1).getHasJoined()) {
+                player.addPoint(numbers.get(i).getNumber() * 2);
                 numbers.get(i).setNumber(0);
                 numbers.get(i + 1).setNumber(2 * numbers.get(i + 1).getNumber());
                 numbers.get(i).setHasJoined(true);

@@ -1,20 +1,21 @@
 package firstProblem;
 
-import javafx.event.ActionEvent;
+import com.sun.javafx.css.StyleCacheEntry;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.time.format.TextStyle;
+import java.util.ArrayList;
+
+import static firstProblem.Direction.UP;
 
 
 public class Controller {
@@ -30,13 +31,6 @@ public class Controller {
     private Controller() {
     }
 
-    public void showPlayGround(PlayGround playGround) {
-        Number[][] numbers = playGround.getNumbers();
-        int squareSize = playGround.getSquareSize();
-        Group group = new Group();
-        Scene scene = new Scene(group, 700, 600);
-
-    }
 
     public void mainMenu(Stage primary) {
         TextField textField = new TextField("Enter User Name ( then press ENTER )");
@@ -105,26 +99,73 @@ public class Controller {
         Group root = new Group();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.web("#bbada0"));
-        Label score = new Label();
         Rectangle square = new Rectangle(100, 50, 500, 500);
         square.setFill(Color.web("#cdc0b4"));
-        Rectangle[][] rectangles = new Rectangle[squareSize][squareSize];
-        /*for (int i = 0; i < squareSize; i++) {
-            for (int j = 0; j < squareSize; j++) {
-                rectangles[i][j] = new Rectangle(100 + i * 500 / squareSize + 1, 100 + j * 500 / squareSize + 1,
-                        500 / squareSize, 500 / squareSize);
-            }
-        }*/
-        rectangles[0][0] = new Rectangle(100,50,500/squareSize,500/squareSize);
-
         root.getChildren().add(square);
-        /*for (int i = 0; i < squareSize; i++) {
+        Label score = new Label(String.valueOf(player.getPoint()));
+        score.setTextFill(Color.BLACK);
+        score.relocate(20, 20);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
+            if (key.getCode() == KeyCode.ESCAPE) {
+                System.exit(0);
+            } else if (key.getCode() == KeyCode.UP) {
+                playGround.move(UP);
+                inGameMenu(playGround,player,stage);
+            } else if (key.getCode() == KeyCode.DOWN) {
+                playGround.move(Direction.DOWN);
+                inGameMenu(playGround,player,stage);
+            } else if (key.getCode() == KeyCode.RIGHT) {
+                playGround.move(Direction.RIGHT);
+                inGameMenu(playGround,player,stage);
+            } else if (key.getCode() == KeyCode.LEFT) {
+                playGround.move(Direction.LEFT);
+                inGameMenu(playGround,player,stage);
+            }
+        });
+        Rectangle[][] rectangles = showPlayGroundCells(playGround);
+        Label[][] labels = showPlayGroundLabels(playGround);
+        for (int i = 0; i < squareSize; i++) {
             for (int j = 0; j < squareSize; j++) {
                 root.getChildren().add(rectangles[i][j]);
+                if (labels[i][j] != null)
+                    root.getChildren().add(labels[i][j]);
             }
-        }*/
-        root.getChildren().add(rectangles[0][0]);
+        }
+        root.getChildren().add(score);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private Rectangle[][] showPlayGroundCells(PlayGround playGround) {
+        int squareSize = playGround.getSquareSize();
+        Number[][] numbers = playGround.getNumbers();
+        Rectangle[][] rectangles = new Rectangle[squareSize][squareSize];
+        ArrayList<Node> result = new ArrayList<>();
+        for (int i = 0; i < squareSize; i++) {
+            for (int j = 0; j < squareSize; j++) {
+                rectangles[i][j] = new Rectangle( 100 + j * 500 / squareSize + j,50 + i * 500 / squareSize + i,
+                        500 / squareSize, 500 / squareSize);
+                rectangles[i][j].setFill(numbers[i][j].getColor());
+                result.add(rectangles[i][j]);
+            }
+        }
+        return rectangles;
+    }
+
+    private Label[][] showPlayGroundLabels(PlayGround playGround) {
+        int squareSize = playGround.getSquareSize();
+        Number[][] numbers = playGround.getNumbers();
+        Label[][] labels = new Label[squareSize][squareSize];
+        for (int i = 0; i < squareSize; i++) {
+            for (int j = 0; j < squareSize; j++) {
+                if (numbers[i][j].getNumber() != 0) {
+                    //String s = (i) +" " +(j);
+                    labels[i][j] = new Label(String.valueOf(numbers[i][j].getNumber()));
+                    labels[i][j].setFont(Font.font(20));
+                    labels[i][j].relocate( 100 + j * 500 / squareSize + j,50 + i * 500 / squareSize + i);
+                }
+            }
+        }
+        return labels;
     }
 }
