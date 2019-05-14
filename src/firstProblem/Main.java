@@ -21,6 +21,7 @@ public class Main extends Application {
         primaryStage.show();*/
         Controller controller = Controller.getInstance();
         controller.mainMenu(primaryStage);
+        /*controller.endGame(new PlayGround(4,null),primaryStage);*/
     }
 
 

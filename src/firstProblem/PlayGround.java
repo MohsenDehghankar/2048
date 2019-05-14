@@ -16,6 +16,10 @@ public class PlayGround {
         initializePlayGround();
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
     private void initializePlayGround() {
         for (int i = 0; i < squareSize; i++) {
             for (int j = 0; j < squareSize; j++) {
