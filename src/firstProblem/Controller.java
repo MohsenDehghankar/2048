@@ -1,25 +1,20 @@
 package firstProblem;
 
-import com.sun.javafx.css.StyleCacheEntry;
-import javafx.collections.ObservableArray;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
-import static firstProblem.Direction.UP;
+import static firstProblem.Direction.*;
 
 
 public class Controller {
@@ -27,6 +22,7 @@ public class Controller {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 600;
     private static final Color BGCOLOR = Color.BLACK;
+    public static Stage primaryStage;
 
     public static Controller getInstance() {
         return controller;
@@ -37,6 +33,7 @@ public class Controller {
 
 
     public void mainMenu(Stage primary) {
+        primaryStage = primary;
         TextField textField = new TextField("Enter User Name ( then press ENTER )");
         Group group = new Group();
         Scene scene = new Scene(group, WIDTH / 2, HEIGHT / 2);
@@ -55,13 +52,16 @@ public class Controller {
         quit.relocate(200, 200);
         group.getChildren().add(quit);
         group.getChildren().add(getLeaderBoardButton(primary));
+        group.getChildren().add(getLoginButton(primary));
         quit.setOnMouseClicked(mouseEvent -> System.exit(0));
         textField.setOnAction(mouseEvent -> {
             if (textField.getText().split(" ").length > 1) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Invalid User Name Entered");
-                alert.setHeaderText("ERROR");
-                alert.setContentText("Please Enter a valid user name first ( no space )");
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Invalid User Name Entered ( don't use space )");
+                alert.showAndWait();
+            } else if (Player.searchPlayer(textField.getText()) != null) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("This User Name Is token");
                 alert.showAndWait();
             } else {
                 Player player = new Player(textField.getText());
@@ -80,6 +80,40 @@ public class Controller {
             showLeaderBoards(stage);
         });
         return button;
+    }
+
+    private Button getLoginButton(Stage stage) {
+        Button button = new Button("Login ( Already Have An Acount )");
+        button.relocate(80, 20);
+        button.setOnMouseClicked(mouseEvent -> {
+            loginMenu(stage);
+        });
+        return button;
+    }
+
+    private void loginMenu(Stage stage) {
+        Group root = new Group();
+        Scene scene = new Scene(root, 200, 200);
+        TextField userName = new TextField("Enter User Name");
+        userName.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
+            if (key.getCode() == KeyCode.ESCAPE)
+                mainMenu(stage);
+        });
+        userName.setOnAction(actionEvent -> {
+            if (userName.getText().split(" ").length > 1
+                    || Player.searchPlayer(userName.getText()) == null) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Invalid User Name Entered");
+                alert.showAndWait();
+            } else {
+                Player player = Player.searchPlayer(userName.getText());
+                PlayGround playGround = player.getPlayGround();
+                controller.inGameMenu(playGround, stage);
+            }
+        });
+        root.getChildren().add(userName);
+        stage.setScene(scene);
+        stage.show();
     }
 
     private void enteringSquareSize(Stage primary, Player player) {
@@ -108,6 +142,13 @@ public class Controller {
         primary.show();
     }
 
+    private Label enterLeaderBoard(){
+        Label label = new Label("Press 'L' to enter Leader Board");
+        label.relocate(450,20);
+        label.setFont(Font.font(15));
+        return label;
+    }
+
     public void inGameMenu(PlayGround playGround, Stage stage) {
         Player player = playGround.getPlayer();
         int squareSize = playGround.getSquareSize();
@@ -121,17 +162,26 @@ public class Controller {
             if (key.getCode() == KeyCode.ESCAPE) {
                 mainMenu(stage);
             } else if (key.getCode() == KeyCode.UP) {
-                playGround.move(UP);
-                inGameMenu(playGround, stage);
+                if (!playGround.move(UP))
+                    //endGame(player);
+                    root.getChildren().add(endGame());
+                else
+                    inGameMenu(playGround, stage);
             } else if (key.getCode() == KeyCode.DOWN) {
-                playGround.move(Direction.DOWN);
-                inGameMenu(playGround, stage);
+                if (!playGround.move(DOWN))
+                    root.getChildren().add(endGame());
+                else
+                    inGameMenu(playGround, stage);
             } else if (key.getCode() == KeyCode.RIGHT) {
-                playGround.move(Direction.RIGHT);
-                inGameMenu(playGround, stage);
+                if (!playGround.move(RIGHT))
+                    root.getChildren().add(endGame());
+                else
+                    inGameMenu(playGround, stage);
             } else if (key.getCode() == KeyCode.LEFT) {
-                playGround.move(Direction.LEFT);
-                inGameMenu(playGround, stage);
+                if (!playGround.move(LEFT))
+                    root.getChildren().add(endGame());
+                else
+                    inGameMenu(playGround, stage);
             } else if (key.getCode() == KeyCode.L) {
                 showLeaderBoards(stage);
             }
@@ -147,8 +197,17 @@ public class Controller {
         }
         root.getChildren().add(getPlayerScore(player));
         root.getChildren().add(getPlayerName(player));
+        root.getChildren().add(enterLeaderBoard());
         stage.setScene(scene);
         stage.show();
+    }
+
+    private Label endGame() {
+        Label gameOver = new Label("Game Over ( ESCAPE to Menu )");
+        gameOver.setFont(Font.font(20));
+        gameOver.setTextFill(Color.BLUE);
+        gameOver.relocate(150, 200);
+        return gameOver;
     }
 
     private Rectangle[][] showPlayGroundCells(PlayGround playGround) {
@@ -200,7 +259,7 @@ public class Controller {
         Label label = new Label("ESCAPE : Main Menu");
         label.setTextFill(Color.WHITE);
         label.setFont(Font.font(10));
-        label.relocate(60,230);
+        label.relocate(60, 230);
         root.getChildren().add(label);
         root.getChildren().add(leaderBoard);
         stage.setScene(scene);

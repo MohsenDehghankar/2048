@@ -13,15 +13,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        /*Group root = new Group();
-        primaryStage.setTitle("2048");
-        Scene scene = new Scene(root,700,600);
-        scene.setFill(Color.rgb(187,173,160));
-        primaryStage.setScene(scene);
-        primaryStage.show();*/
         Controller controller = Controller.getInstance();
         controller.mainMenu(primaryStage);
-        /*controller.endGame(new PlayGround(4,null),primaryStage);*/
     }
 
 

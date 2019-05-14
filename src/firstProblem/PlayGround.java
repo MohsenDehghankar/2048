@@ -12,6 +12,7 @@ public class PlayGround {
     public PlayGround(int squareSize, Player player) {
         this.squareSize = squareSize;
         this.player = player;
+        this.player.setPlayGround(this);
         numbers = new Number[squareSize][squareSize];
         initializePlayGround();
     }
@@ -34,8 +35,10 @@ public class PlayGround {
         numbers[randomRowTwo][randomColTwo].setNumber(2);
     }
 
-    public void move(Direction direction) {
+    public boolean move(Direction direction) {
         Integer[][] previousNumbers = getCopyOfNumbers();
+        if(!canMove())
+            return false;
         switch (direction) {
             case LEFT:
                 for (int i = 0; i < squareSize; i++) {
@@ -63,10 +66,10 @@ public class PlayGround {
                 break;
         }
         Integer[][] newNumbers = getCopyOfNumbers();
-        //assignPoint(previousNumbers,newNumbers);
         if (!isEqual(previousNumbers, newNumbers))
             generateRandomAfterMove();
         trueHasJoineds();
+        return true;
     }
 
     private int calculateSumOfArray(Integer[][] numbers) {
@@ -79,7 +82,7 @@ public class PlayGround {
         return result;
     }
 
-    private void assignPoint(Integer[][] previous, Integer[][] last) {
+    /*private void assignPoint(Integer[][] previous, Integer[][] last) {
         int preSum = calculateSumOfArray(previous);
         int lastSum = calculateSumOfArray(last);
         //TODO
@@ -87,7 +90,7 @@ public class PlayGround {
         System.out.println(lastSum);
         player.addPoint(lastSum - preSum);
     }
-
+*/
     private void generateRandomAfterMove() {
         ArrayList<Integer> rows = new ArrayList<>();
         ArrayList<Integer> cols = new ArrayList<>();
@@ -101,8 +104,10 @@ public class PlayGround {
         }
         int random = (new Random().nextInt(rows.size()));
         int randomNumber = (new Random().nextInt(2));
-        Number newNumber = new Number((randomNumber + 1) * 2, rows.get(random), cols.get(random));
-        numbers[rows.get(random)][cols.get(random)] = newNumber;
+        if(random >= 0) {
+            Number newNumber = new Number((randomNumber + 1) * 2, rows.get(random), cols.get(random));
+            numbers[rows.get(random)][cols.get(random)] = newNumber;
+        }
     }
 
     private ArrayList<Number> getArrayListOfNumbers(int number, boolean isRow) {
@@ -136,7 +141,7 @@ public class PlayGround {
         return true;
     }
 
-    public void show() {
+    /*public void show() {
         for (int i = 0; i < squareSize; i++) {
             for (int j = 0; j < squareSize; j++) {
                 if (numbers[i][j] == null) {
@@ -146,7 +151,7 @@ public class PlayGround {
             }
             System.out.println();
         }
-    }
+    }*/
 
     private void trueHasJoineds() {
         for (int i = 0; i < squareSize; i++) {
