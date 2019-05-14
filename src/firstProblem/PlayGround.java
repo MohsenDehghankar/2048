@@ -83,11 +83,13 @@ public class PlayGround {
                 }
             }
         }
-        int random = (new Random().nextInt(rows.size()));
-        int randomNumber = (new Random().nextInt(2));
-        if(random >= 0) {
-            Number newNumber = new Number((randomNumber + 1) * 2, rows.get(random), cols.get(random));
-            numbers[rows.get(random)][cols.get(random)] = newNumber;
+        if(rows.size() > 0) {
+            int random = (new Random().nextInt(rows.size()));
+            int randomNumber = (new Random().nextInt(2));
+            if (random >= 0) {
+                Number newNumber = new Number((randomNumber + 1) * 2, rows.get(random), cols.get(random));
+                numbers[rows.get(random)][cols.get(random)] = newNumber;
+            }
         }
     }
 
