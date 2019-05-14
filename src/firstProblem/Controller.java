@@ -22,7 +22,7 @@ public class Controller {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 600;
     private static final Color BGCOLOR = Color.BLACK;
-    public static Stage primaryStage;
+    private static Stage primaryStage;
 
     public static Controller getInstance() {
         return controller;
@@ -32,7 +32,7 @@ public class Controller {
     }
 
 
-    public void mainMenu(Stage primary) {
+    public void showMainMenu(Stage primary) {
         primaryStage = primary;
         TextField textField = new TextField("Enter User Name ( then press ENTER )");
         Group group = new Group();
@@ -65,7 +65,7 @@ public class Controller {
                 alert.showAndWait();
             } else {
                 Player player = new Player(textField.getText());
-                enteringSquareSize(primary, player);
+                showSquareSizeEnteringMenu(primary, player);
             }
         });
         primary.setTitle("2048");
@@ -86,18 +86,18 @@ public class Controller {
         Button button = new Button("Login ( Already Have An Acount )");
         button.relocate(80, 20);
         button.setOnMouseClicked(mouseEvent -> {
-            loginMenu(stage);
+            showLoginMenu(stage);
         });
         return button;
     }
 
-    private void loginMenu(Stage stage) {
+    private void showLoginMenu(Stage stage) {
         Group root = new Group();
         Scene scene = new Scene(root, 200, 200);
         TextField userName = new TextField("Enter User Name");
         userName.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             if (key.getCode() == KeyCode.ESCAPE)
-                mainMenu(stage);
+                showMainMenu(stage);
         });
         userName.setOnAction(actionEvent -> {
             if (userName.getText().split(" ").length > 1
@@ -108,7 +108,7 @@ public class Controller {
             } else {
                 Player player = Player.searchPlayer(userName.getText());
                 PlayGround playGround = player.getPlayGround();
-                controller.inGameMenu(playGround, stage);
+                controller.showInGameMenu(playGround, stage);
             }
         });
         root.getChildren().add(userName);
@@ -116,7 +116,7 @@ public class Controller {
         stage.show();
     }
 
-    private void enteringSquareSize(Stage primary, Player player) {
+    private void showSquareSizeEnteringMenu(Stage primary, Player player) {
         Group root = new Group();
         Scene scene = new Scene(root, 200, 100);
         scene.setFill(Color.BLACK);
@@ -128,7 +128,7 @@ public class Controller {
             try {
                 square = Integer.parseInt(field.getText());
                 PlayGround playGround = new PlayGround(square, player);
-                inGameMenu(playGround, primary);
+                showInGameMenu(playGround, primary);
             } catch (NumberFormatException e) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("invalid input");
@@ -142,14 +142,14 @@ public class Controller {
         primary.show();
     }
 
-    private Label enterLeaderBoard(){
+    private Label getEnterLeaderBoardLabel(){
         Label label = new Label("Press 'L' to enter Leader Board");
         label.relocate(450,20);
         label.setFont(Font.font(15));
         return label;
     }
 
-    public void inGameMenu(PlayGround playGround, Stage stage) {
+    public void showInGameMenu(PlayGround playGround, Stage stage) {
         Player player = playGround.getPlayer();
         int squareSize = playGround.getSquareSize();
         Group root = new Group();
@@ -160,28 +160,27 @@ public class Controller {
         root.getChildren().add(square);
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             if (key.getCode() == KeyCode.ESCAPE) {
-                mainMenu(stage);
+                showMainMenu(stage);
             } else if (key.getCode() == KeyCode.UP) {
                 if (!playGround.move(UP))
-                    //endGame(player);
                     root.getChildren().add(endGame());
                 else
-                    inGameMenu(playGround, stage);
+                    showInGameMenu(playGround, stage);
             } else if (key.getCode() == KeyCode.DOWN) {
                 if (!playGround.move(DOWN))
                     root.getChildren().add(endGame());
                 else
-                    inGameMenu(playGround, stage);
+                    showInGameMenu(playGround, stage);
             } else if (key.getCode() == KeyCode.RIGHT) {
                 if (!playGround.move(RIGHT))
                     root.getChildren().add(endGame());
                 else
-                    inGameMenu(playGround, stage);
+                    showInGameMenu(playGround, stage);
             } else if (key.getCode() == KeyCode.LEFT) {
                 if (!playGround.move(LEFT))
                     root.getChildren().add(endGame());
                 else
-                    inGameMenu(playGround, stage);
+                    showInGameMenu(playGround, stage);
             } else if (key.getCode() == KeyCode.L) {
                 showLeaderBoards(stage);
             }
@@ -197,7 +196,7 @@ public class Controller {
         }
         root.getChildren().add(getPlayerScore(player));
         root.getChildren().add(getPlayerName(player));
-        root.getChildren().add(enterLeaderBoard());
+        root.getChildren().add(getEnterLeaderBoardLabel());
         stage.setScene(scene);
         stage.show();
     }
@@ -233,7 +232,6 @@ public class Controller {
         for (int i = 0; i < squareSize; i++) {
             for (int j = 0; j < squareSize; j++) {
                 if (numbers[i][j].getNumber() != 0) {
-                    //String s = (i) +" " +(j);
                     labels[i][j] = new Label(String.valueOf(numbers[i][j].getNumber()));
                     labels[i][j].setFont(Font.font(20));
                     labels[i][j].relocate(100 + j * 500 / squareSize + j, 50 + i * 500 / squareSize + i);
@@ -254,7 +252,7 @@ public class Controller {
         leaderBoard.setPrefSize(200, 200);
         leaderBoard.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             if (key.getCode() == KeyCode.ESCAPE)
-                mainMenu(stage);
+                showMainMenu(stage);
         });
         Label label = new Label("ESCAPE : Main Menu");
         label.setTextFill(Color.WHITE);

@@ -72,25 +72,6 @@ public class PlayGround {
         return true;
     }
 
-    private int calculateSumOfArray(Integer[][] numbers) {
-        int result = 0;
-        for (int i = 0; i < squareSize; i++) {
-            for (int j = 0; j < squareSize; j++) {
-                result += numbers[i][j];
-            }
-        }
-        return result;
-    }
-
-    /*private void assignPoint(Integer[][] previous, Integer[][] last) {
-        int preSum = calculateSumOfArray(previous);
-        int lastSum = calculateSumOfArray(last);
-        //TODO
-        System.out.println(preSum);
-        System.out.println(lastSum);
-        player.addPoint(lastSum - preSum);
-    }
-*/
     private void generateRandomAfterMove() {
         ArrayList<Integer> rows = new ArrayList<>();
         ArrayList<Integer> cols = new ArrayList<>();
@@ -141,18 +122,6 @@ public class PlayGround {
         return true;
     }
 
-    /*public void show() {
-        for (int i = 0; i < squareSize; i++) {
-            for (int j = 0; j < squareSize; j++) {
-                if (numbers[i][j] == null) {
-                    System.out.print("|_|");
-                } else
-                    System.out.printf("|%d|", numbers[i][j].getNumber());
-            }
-            System.out.println();
-        }
-    }*/
-
     private void trueHasJoineds() {
         for (int i = 0; i < squareSize; i++) {
             for (int j = 0; j < squareSize; j++) {
@@ -162,9 +131,7 @@ public class PlayGround {
     }
 
     private void moveInRowORColumn(ArrayList<Number> numbers) {
-        // from first to last -->
         for (int i = squareSize - 2; i >= 0; i--) {
-            // i --> i + 1
             for (int j = squareSize - 2; j >= 0; j--) {
                 moveOneNumber(numbers, i);
             }
@@ -187,7 +154,7 @@ public class PlayGround {
         }
     }
 
-    private boolean canMove() { // if false , means game is finished
+    private boolean canMove() {
         for (int i = 0; i < squareSize; i++) {
             if (canMove(numbers[i]))
                 return true;

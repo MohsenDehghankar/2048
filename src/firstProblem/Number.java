@@ -30,22 +30,6 @@ public class Number {
         return color;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
     public void setNumber(int number) {
         this.number = number;
         setColor();
